@@ -74,6 +74,9 @@ void slog_logger_reset(SLogger* logger) {
 
 void slog_log_console(SLogger* logger, SLSeverity severity, char* msg) {
   assert(logger && "[SLOG]: Logger can't be NULL!");
+  assert(logger->name && "[SLOG]: Logger must have a name!");
+  assert(msg && "[SLOG]: Expected a valid message to log!");
+
   char* severityStr;
 
   switch(severity) {
