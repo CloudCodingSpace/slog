@@ -29,9 +29,9 @@ typedef struct {
   SLColor crntColor;
 } SLogger;
 
-void slog_logger_set_name(SLogger* logger, char* name);
-void slog_logger_set_color(SLogger* logger, SLColor color);
-void slog_logger_reset(SLogger* logger);
+void slogLoggerSetName(SLogger* logger, char* name);
+void slogLoggerSetColor(SLogger* logger, SLColor color);
+void slogLoggerReset(SLogger* logger);
 
-void slog_log_console(SLogger* logger, SLSeverity severity, char* msg);
+void slogLogConsole(SLogger* logger, SLSeverity severity, char* msg);
 

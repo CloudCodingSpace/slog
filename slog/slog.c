@@ -6,7 +6,7 @@
 #include <time.h>
 #include <assert.h>
 
-void slog_logger_set_name(SLogger* logger, char* name) {
+void slogLoggerSetName(SLogger* logger, char* name) {
   assert(logger && "[SLOG]: The logger can't be NULL!");
   assert(name && "[SLOG]: The name shouldn't be NULL!");
 
@@ -21,7 +21,7 @@ void slog_logger_set_name(SLogger* logger, char* name) {
   logger->name[size] = '\0';
 }
 
-void slog_logger_set_color(SLogger* logger, SLColor color) {
+void slogLoggerSetColor(SLogger* logger, SLColor color) {
   assert(logger && "[SLOG]: Logger can't be NULL!");
 
   logger->crntColor = color;
@@ -62,7 +62,7 @@ void slog_logger_set_color(SLogger* logger, SLColor color) {
   }
 }
 
-void slog_logger_reset(SLogger* logger) {
+void slogLoggerReset(SLogger* logger) {
   assert(logger && "[SLOG]: Logger can't be NULL!");
 
   if(logger->name) {
@@ -72,7 +72,7 @@ void slog_logger_reset(SLogger* logger) {
   logger->crntColor = SLCOLOR_DEFAULT;
 }
 
-void slog_log_console(SLogger* logger, SLSeverity severity, char* msg) {
+void slogLogConsole(SLogger* logger, SLSeverity severity, char* msg) {
   assert(logger && "[SLOG]: Logger can't be NULL!");
   assert(logger->name && "[SLOG]: Logger must have a name!");
   assert(msg && "[SLOG]: Expected a valid message to log!");
@@ -81,23 +81,23 @@ void slog_log_console(SLogger* logger, SLSeverity severity, char* msg) {
 
   switch(severity) {
     case SLOG_SEVERITY_INFO:
-      slog_logger_set_color(logger, SLCOLOR_GREEN);
+      slogLoggerSetColor(logger, SLCOLOR_GREEN);
       severityStr = "INFO";
       break;
     case SLOG_SEVERITY_WARN:
-      slog_logger_set_color(logger, SLCOLOR_YELLOW);
+      slogLoggerSetColor(logger, SLCOLOR_YELLOW);
       severityStr = "WARN";
       break;
     case SLOG_SEVERITY_DEBUG:
-      slog_logger_set_color(logger, SLCOLOR_BLUE);
+      slogLoggerSetColor(logger, SLCOLOR_BLUE);
       severityStr = "DEBUG";
       break;
     case SLOG_SEVERITY_ERROR:
-      slog_logger_set_color(logger, SLCOLOR_RED);
+      slogLoggerSetColor(logger, SLCOLOR_RED);
       severityStr = "ERROR";
       break;
     case SLOG_SEVERITY_FATAL:
-      slog_logger_set_color(logger, SLCOLOR_RED);
+      slogLoggerSetColor(logger, SLCOLOR_RED);
       severityStr = "FATAL";
       break;
     case SLOG_SEVERITY_CUSTOM:
@@ -110,5 +110,5 @@ void slog_log_console(SLogger* logger, SLSeverity severity, char* msg) {
 
   printf("[%s] %s: %s", logger->name, severityStr, msg);
 
-  slog_logger_set_color(logger, SLCOLOR_DEFAULT);
+  slogLoggerSetColor(logger, SLCOLOR_DEFAULT);
 }
