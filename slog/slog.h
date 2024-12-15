@@ -1,5 +1,8 @@
 #pragma once
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum {
   SLOG_SEVERITY_CUSTOM, // Use it only to log the text!
@@ -35,3 +38,6 @@ void slogLoggerReset(SLogger* logger);
 
 void slogLogConsole(SLogger* logger, SLSeverity severity, char* msg);
 
+#ifdef __cplusplus
+}
+#endif

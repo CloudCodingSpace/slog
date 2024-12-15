@@ -6,6 +6,10 @@
 #include <time.h>
 #include <assert.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void slogLoggerSetName(SLogger* logger, char* name) {
   assert(logger && "[SLOG]: The logger can't be NULL!");
   assert(name && "[SLOG]: The name shouldn't be NULL!");
@@ -112,3 +116,7 @@ void slogLogConsole(SLogger* logger, SLSeverity severity, char* msg) {
 
   slogLoggerSetColor(logger, SLCOLOR_DEFAULT);
 }
+
+#ifdef __cplusplus
+}
+#endif
