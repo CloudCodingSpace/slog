@@ -76,7 +76,7 @@ void slogLoggerReset(SLogger* logger) {
   logger->crntColor = SLCOLOR_DEFAULT;
 }
 
-void slogLogConsole(SLogger* logger, SLSeverity severity, char* msg) {
+void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg) {
   assert(logger && "[SLOG]: Logger can't be NULL!");
   assert(logger->name && "[SLOG]: Logger must have a name!");
   assert(msg && "[SLOG]: Expected a valid message to log!");
