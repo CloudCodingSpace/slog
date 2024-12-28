@@ -32,7 +32,7 @@ typedef struct {
   SLColor crntColor;
 } SLogger;
 
-void slogLoggerSetName(SLogger* logger, char* name);
+void slogLoggerSetName(SLogger* logger, const char* name);
 void slogLoggerSetColor(SLogger* logger, SLColor color);
 void slogLoggerReset(SLogger* logger);
 

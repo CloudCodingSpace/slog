@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-void slogLoggerSetName(SLogger* logger, char* name) {
+void slogLoggerSetName(SLogger* logger, const char* name) {
   assert(logger && "[SLOG]: The logger can't be NULL!");
   assert(name && "[SLOG]: The name shouldn't be NULL!");
 
