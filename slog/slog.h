@@ -36,7 +36,7 @@ void slogLoggerSetName(SLogger* logger, const char* name);
 void slogLoggerSetColor(SLogger* logger, SLColor color);
 void slogLoggerReset(SLogger* logger);
 
-void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg);
+void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg, ...);
 
 #ifdef __cplusplus
 }

@@ -6,7 +6,7 @@ int main(int argc, const char** argv) {
   slogLoggerReset(&logger);
   slogLoggerSetName(&logger, "main");
   
-  slogLogConsole(&logger, SLOG_SEVERITY_INFO, "Hello"); 
+  slogLogConsole(&logger, -1, "Hello %d\n", 5); 
 
   return 0;
 }

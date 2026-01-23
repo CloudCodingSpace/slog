@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 #include <assert.h>
+#include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,7 +61,7 @@ void slogLoggerSetColor(SLogger* logger, SLColor color) {
       break;
     case SLCOLOR_TOTAL_COUNT: break;
     default:
-      printf("[SLOG]: The color provided must be a valid color! The color provided is %d", color);
+      printf("[SLOG]: The color provided must be a valid color! The color provided is %d\n", color);
       logger->crntColor = SLCOLOR_DEFAULT;
       break;
   }
@@ -76,7 +77,7 @@ void slogLoggerReset(SLogger* logger) {
   logger->crntColor = SLCOLOR_DEFAULT;
 }
 
-void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg) {
+void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg, ...) {
   assert(logger && "[SLOG]: Logger can't be NULL!");
   assert(logger->name && "[SLOG]: Logger must have a name!");
   assert(msg && "[SLOG]: Expected a valid message to log!");
@@ -108,11 +109,18 @@ void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg) {
       printf("[%s]: %s", logger->name, msg);
       return;
     default:
-      printf("[SLOG]: The severity parameter must be a valid severity. The severity provided was %d", severity);
-      break; 
+      printf("[SLOG]: The severity parameter must be a valid severity. The severity provided was %d\n", severity);
+      return; 
   }
 
-  printf("[%s] %s: %s", logger->name, severityStr, msg);
+  printf("[%s] %s: ", logger->name, severityStr);
+  
+  va_list args;
+  va_start(args, msg);
+  vprintf(msg, args);
+  va_end(args);
+
+  printf("\n");
 
   slogLoggerSetColor(logger, SLCOLOR_DEFAULT);
 }
