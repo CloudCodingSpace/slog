@@ -6,7 +6,11 @@ int main(int argc, const char** argv) {
   slogLoggerReset(&logger);
   slogLoggerSetName(&logger, "main");
   
-  slogLogConsole(&logger, -1, "Hello %d\n", 5); 
+  slogLogConsole(&logger, SLOG_SEVERITY_WARN, "Hello %d", 5); 
+  slogLogConsole(&logger, SLOG_SEVERITY_INFO, "Hello %d", 5); 
+  slogLogConsole(&logger, SLOG_SEVERITY_DEBUG, "Hello %d", 5); 
+
+  slogLoggerReset(&logger);
 
   return 0;
 }

@@ -33,31 +33,31 @@ void slogLoggerSetColor(SLogger* logger, SLColor color) {
 
   switch(color) {
     case SLCOLOR_RED:
-      printf("\033[0;31m");
+      printf("\033[0;%d%dm", (SLCOLOR_RED >> 8) & 0xff, SLCOLOR_RED & 0xff);
       break;
     case SLCOLOR_YELLOW:
-      printf("\033[0;33m");
+      printf("\033[0;%d%dm", (SLCOLOR_YELLOW >> 8) & 0xff, SLCOLOR_YELLOW & 0xff);
       break;
     case SLCOLOR_WHITE:
-      printf("\033[0;37m");
+      printf("\033[0;%d%dm", (SLCOLOR_WHITE >> 8) & 0xff, SLCOLOR_WHITE & 0xff);
       break;
     case SLCOLOR_BLACK:
-      printf("\033[0;30m");
+      printf("\033[0;%d%dm", (SLCOLOR_BLACK >> 8) & 0xff, SLCOLOR_BLACK & 0xff);
       break;
     case SLCOLOR_GREEN:
-      printf("\033[0;32m");
+      printf("\033[0;%d%dm", (SLCOLOR_GREEN >> 8) & 0xff, SLCOLOR_GREEN & 0xff);
       break;
     case SLCOLOR_BLUE:
-      printf("\033[0;34m");
+      printf("\033[0;%d%dm", (SLCOLOR_BLUE >> 8) & 0xff, SLCOLOR_BLUE & 0xff);
       break;
     case SLCOLOR_CYAN:
-      printf("\033[0;36m");
+      printf("\033[0;%d%dm", (SLCOLOR_CYAN >> 8) & 0xff, SLCOLOR_CYAN & 0xff);
       break;
     case SLCOLOR_MAGENTA:
-      printf("\033[0;35m");
+      printf("\033[0;%d%dm", (SLCOLOR_MAGENTA >> 8) & 0xff, SLCOLOR_MAGENTA & 0xff);
       break;
     case SLCOLOR_DEFAULT: 
-      printf("\033[0;0m");
+      printf("\033[0;%dm", SLCOLOR_DEFAULT & 0xff);
       break;
     case SLCOLOR_TOTAL_COUNT: break;
     default:

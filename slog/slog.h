@@ -5,7 +5,7 @@ extern "C" {
 #endif
 
 typedef enum {
-  SLOG_SEVERITY_CUSTOM, // Use it only to log the text!
+  SLOG_SEVERITY_CUSTOM,
   SLOG_SEVERITY_INFO,
   SLOG_SEVERITY_DEBUG,
   SLOG_SEVERITY_WARN,
@@ -14,16 +14,16 @@ typedef enum {
 } SLSeverity;
 
 typedef enum {
-  SLCOLOR_RED,
-  SLCOLOR_WHITE,
-  SLCOLOR_GREEN,
-  SLCOLOR_BLACK,
-  SLCOLOR_YELLOW,
-  SLCOLOR_MAGENTA,
-  SLCOLOR_BLUE,
-  SLCOLOR_CYAN,
-  SLCOLOR_DEFAULT,
-  SLCOLOR_TOTAL_COUNT
+  SLCOLOR_RED = (3 << 8) | 1,
+  SLCOLOR_WHITE = (3 << 8) | 7,
+  SLCOLOR_GREEN = (3 << 8) | 2,
+  SLCOLOR_BLACK = (3 << 8) | 0,
+  SLCOLOR_YELLOW = (3 << 8) | 3,
+  SLCOLOR_MAGENTA = (3 << 8) | 5,
+  SLCOLOR_BLUE = (3 << 8) | 4,
+  SLCOLOR_CYAN = (3 << 8) | 6,
+  SLCOLOR_DEFAULT = 0,
+  SLCOLOR_TOTAL_COUNT = 10
 } SLColor;
 
 
