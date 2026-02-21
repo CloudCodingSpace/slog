@@ -37,11 +37,11 @@ int main() {
 Using the default severities :-
 ```c
 
-slogLogConsole(&logger, SLOG_SEVERITY_INFO, "Hello!! My age :- %d, my name :- ", 34, "CloudCodingSpace");
-slogLogConsole(&logger, SLOG_SEVERITY_WARN, "Hello!! My age :- %d, my name :- ", 34, "CloudCodingSpace");
-slogLogConsole(&logger, SLOG_SEVERITY_DEBUG, "Hello!! My age :- %d, my name :- ", 34, "CloudCodingSpace");
-slogLogConsole(&logger, SLOG_SEVERITY_FATAL, "Hello!! My age :- %d, my name :- ", 34, "CloudCodingSpace");
-slogLogConsole(&logger, SLOG_SEVERITY_ERROR, "Hello!! My age :- %d, my name :- ", 34, "CloudCodingSpace");
+slogLogConsole(&logger, SLOG_SEVERITY_INFO, "Hello!! My age :- %d, my name :- %s", 34, "CloudCodingSpace");
+slogLogConsole(&logger, SLOG_SEVERITY_WARN, "Hello!! My age :- %d, my name :- %s", 34, "CloudCodingSpace");
+slogLogConsole(&logger, SLOG_SEVERITY_DEBUG, "Hello!! My age :- %d, my name :- %s", 34, "CloudCodingSpace");
+slogLogConsole(&logger, SLOG_SEVERITY_FATAL, "Hello!! My age :- %d, my name :- %s", 34, "CloudCodingSpace");
+slogLogConsole(&logger, SLOG_SEVERITY_ERROR, "Hello!! My age :- %d, my name :- %s", 34, "CloudCodingSpace");
 
 ```
 
