@@ -4,16 +4,23 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <assert.h>
 #include <stdarg.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#define SLERROR(msg, ...) do { printf("\033[0;31m"); printf(msg, ##__VA_ARGS__); printf("\n\033[0;0m"); } while(0);
+
 void slogLoggerSetName(SLogger* logger, const char* name) {
-  assert(logger && "[SLOG]: The logger can't be NULL!");
-  assert(name && "[SLOG]: The name shouldn't be NULL!");
+  if(!logger) {
+    SLERROR("[SLOG]: The logger can't be NULL!");
+    return;
+  }
+  if(!name) {
+    SLERROR("[SLOG]: The name shouldn't be NULL!");
+    return;
+  }
 
   if(logger->name) {
     free((void*) logger->name);
@@ -27,7 +34,10 @@ void slogLoggerSetName(SLogger* logger, const char* name) {
 }
 
 void slogLoggerSetColor(SLogger* logger, SLColor color) {
-  assert(logger && "[SLOG]: Logger can't be NULL!");
+  if(!logger) {
+    SLERROR("[SLOG]: The logger can't be NULL!");
+    return;
+  }
 
   logger->crntColor = color;
 
@@ -61,14 +71,16 @@ void slogLoggerSetColor(SLogger* logger, SLColor color) {
       break;
     case SLCOLOR_TOTAL_COUNT: break;
     default:
-      printf("[SLOG]: The color provided must be a valid color! The color provided is %d\n", color);
+      SLERROR("[SLOG]: The color provided must be a valid color! The color provided is %d!", color);
       logger->crntColor = SLCOLOR_DEFAULT;
-      break;
   }
 }
 
 void slogLoggerReset(SLogger* logger) {
-  assert(logger && "[SLOG]: Logger can't be NULL!");
+  if(!logger) {
+    SLERROR("[SLOG]: The logger can't be NULL!");
+    return;
+  }
 
   if(logger->name) {
     free((void*) logger->name);
@@ -78,9 +90,18 @@ void slogLoggerReset(SLogger* logger) {
 }
 
 void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg, ...) {
-  assert(logger && "[SLOG]: Logger can't be NULL!");
-  assert(logger->name && "[SLOG]: Logger must have a name!");
-  assert(msg && "[SLOG]: Expected a valid message to log!");
+  if(!logger) {
+    SLERROR("[SLOG]: The logger can't be NULL!");
+    return;
+  }
+  if(!logger->name) {
+    SLERROR("[SLOG]: The logger's name shouldn't be NULL!");
+    return;
+  }
+  if(!msg) {
+    SLERROR("[SLOG]: Expected a valid message to log!");
+    return;
+  }
 
   char* severityStr;
 
@@ -109,8 +130,8 @@ void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg, ...) 
       printf("[%s]: %s", logger->name, msg);
       return;
     default:
-      printf("[SLOG]: The severity parameter must be a valid severity. The severity provided was %d\n", severity);
-      return; 
+      SLERROR("[SLOG]: The severity parameter must be a valid severity. The severity provided was %d!", severity);
+      return;
   }
 
   printf("[%s] %s: ", logger->name, severityStr);
