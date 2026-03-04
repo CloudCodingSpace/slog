@@ -29,18 +29,20 @@ typedef enum {
   SLCOLOR_TOTAL_COUNT = 10
 } SLColor;
 
+typedef void (*SLCustomOutCallback)(void* userState, uint64_t logLen, uint8_t* log);
+
 typedef struct SLogger_s {
   char* name;
 
   void* userState;
-  void (*callback)(void* userState, uint64_t logLen, uint8_t* log, struct SLogger_s* logger);
+  SLCustomOutCallback callback;
 } SLogger;
 
 void slogLoggerSetName(SLogger* logger, const char* name);
 void slogLoggerSetColor(SLogger* logger, SLColor color);
 void slogLoggerReset(SLogger* logger);
 
-void slogSetCustomOutCallback(SLogger* logger, void* userState, void (callback)(void* state, uint64_t logLen, uint8_t* log, SLogger* logger));
+void slogSetCustomOutCallback(SLogger* logger, void* userState, SLCustomOutCallback callback);
 void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg, ...);
 
 #ifdef __cplusplus

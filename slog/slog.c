@@ -103,8 +103,7 @@ void slogLoggerReset(SLogger* logger) {
   }
 }
 
-void slogSetCustomOutCallback(SLogger* logger, void* userState, 
-                              void (callback)(void* state, uint64_t logLen, uint8_t* log, SLogger* logger)) {
+void slogSetCustomOutCallback(SLogger* logger, void* userState, SLCustomOutCallback callback) {
   if(!logger) {
     SLERROR("[SLOG]: The logger can't be NULL!");
     return;
@@ -134,7 +133,14 @@ void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg, ...) 
   }
 
   if(severity == SLOG_SEVERITY_CUSTOM) {
-    printf("[%s]: %s", logger->name, msg);
+    printf("[%s]: ", logger->name);
+  
+    va_list args;
+    va_start(args, msg);
+    vprintf(msg, args);
+    va_end(args);
+
+    printf("\n");
     return;
   }
 
