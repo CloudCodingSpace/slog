@@ -9,6 +9,8 @@ int main(int argc, const char** argv) {
   slogLogConsole(&logger, SLOG_SEVERITY_WARN, "Hello %d", 5); 
   slogLogConsole(&logger, SLOG_SEVERITY_INFO, "Hello %d", 5); 
   slogLogConsole(&logger, SLOG_SEVERITY_DEBUG, "Hello %d", 5); 
+  slogLogConsole(&logger, SLOG_SEVERITY_ERROR, "Hello %d", 5); 
+  slogLogConsole(&logger, SLOG_SEVERITY_FATAL, "Hello %d", 5); 
 
   slogLoggerReset(&logger);
 

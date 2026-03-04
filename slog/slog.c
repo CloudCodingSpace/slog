@@ -12,6 +12,24 @@ extern "C" {
 
 #define SLERROR(msg, ...) do { printf("\033[0;31m"); printf(msg, ##__VA_ARGS__); printf("\n\033[0;0m"); } while(0);
 
+static const char* severityStrTable[SLOG_SEVERITY_COUNT] = {
+  "",
+  "INFO",
+  "DEBUG",
+  "WARN",
+  "ERROR",
+  "FATAL"
+};
+
+static uint64_t severityColorTable[SLOG_SEVERITY_COUNT] = {
+  0,
+  SLCOLOR_GREEN,
+  SLCOLOR_BLUE,
+  SLCOLOR_YELLOW,
+  SLCOLOR_RED,
+  SLCOLOR_RED
+};
+
 void slogLoggerSetName(SLogger* logger, const char* name) {
   if(!logger) {
     SLERROR("[SLOG]: The logger can't be NULL!");
@@ -38,8 +56,6 @@ void slogLoggerSetColor(SLogger* logger, SLColor color) {
     SLERROR("[SLOG]: The logger can't be NULL!");
     return;
   }
-
-  logger->crntColor = color;
 
   switch(color) {
     case SLCOLOR_RED:
@@ -72,7 +88,6 @@ void slogLoggerSetColor(SLogger* logger, SLColor color) {
     case SLCOLOR_TOTAL_COUNT: break;
     default:
       SLERROR("[SLOG]: The color provided must be a valid color! The color provided is %d!", color);
-      logger->crntColor = SLCOLOR_DEFAULT;
   }
 }
 
@@ -86,7 +101,17 @@ void slogLoggerReset(SLogger* logger) {
     free((void*) logger->name);
     logger->name = NULL;
   }
-  logger->crntColor = SLCOLOR_DEFAULT;
+}
+
+void slogSetCustomOutCallback(SLogger* logger, void* userState, 
+                              void (callback)(void* state, uint64_t logLen, uint8_t* log, SLogger* logger)) {
+  if(!logger) {
+    SLERROR("[SLOG]: The logger can't be NULL!");
+    return;
+  }
+
+  logger->userState = userState;
+  logger->callback = callback;
 }
 
 void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg, ...) {
@@ -103,38 +128,18 @@ void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg, ...) 
     return;
   }
 
-  char* severityStr;
-
-  switch(severity) {
-    case SLOG_SEVERITY_INFO:
-      slogLoggerSetColor(logger, SLCOLOR_GREEN);
-      severityStr = "INFO";
-      break;
-    case SLOG_SEVERITY_WARN:
-      slogLoggerSetColor(logger, SLCOLOR_YELLOW);
-      severityStr = "WARN";
-      break;
-    case SLOG_SEVERITY_DEBUG:
-      slogLoggerSetColor(logger, SLCOLOR_BLUE);
-      severityStr = "DEBUG";
-      break;
-    case SLOG_SEVERITY_ERROR:
-      slogLoggerSetColor(logger, SLCOLOR_RED);
-      severityStr = "ERROR";
-      break;
-    case SLOG_SEVERITY_FATAL:
-      slogLoggerSetColor(logger, SLCOLOR_RED);
-      severityStr = "FATAL";
-      break;
-    case SLOG_SEVERITY_CUSTOM:
-      printf("[%s]: %s", logger->name, msg);
-      return;
-    default:
-      SLERROR("[SLOG]: The severity parameter must be a valid severity. The severity provided was %d!", severity);
-      return;
+  if((severity < 0) || (severity >= SLOG_SEVERITY_COUNT)) {
+    SLERROR("[SLOG]: The severity parameter must be a valid severity. The severity provided was %d!", severity);
+    return;
   }
 
-  printf("[%s] %s: ", logger->name, severityStr);
+  if(severity == SLOG_SEVERITY_CUSTOM) {
+    printf("[%s]: %s", logger->name, msg);
+    return;
+  }
+
+  slogLoggerSetColor(logger, severityColorTable[severity]);
+  printf("[%s] %s: ", logger->name, severityStrTable[severity]);
   
   va_list args;
   va_start(args, msg);
