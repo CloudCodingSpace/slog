@@ -38,8 +38,8 @@ void slogLoggerCreate(SLogger* logger, const char* name, const char* fileName, S
 
   memset(logger, 0, sizeof(SLogger));
   slogLoggerSetName(logger, name);
- 
-  logger->features = features;
+
+  memcpy((SLoggerFeatures*)&logger->features, &features, sizeof(SLoggerFeatures));
 
   if(logger->fileName)
     slogLoggerSetOutFileName(logger, fileName);

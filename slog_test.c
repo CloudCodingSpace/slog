@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-void callback(void* userState, size_t logLen, const char* log) {
+void callback(void* userState, uint64_t logLen, const char* log) {
   printf(log);
 }
 
