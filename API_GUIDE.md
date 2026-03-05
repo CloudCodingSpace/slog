@@ -73,6 +73,8 @@ void callback(void* userState, uint64_t logLen, const char* log) {
 }
 ```
 
+> NOTE: The last char of the `log` parameter in the callback is "\0"
+
 ## Setting the output file path :-
 
 Suppose you passed `NULL` in the output file path parameter in `slogLoggerCreate(...)`, you can use the function, 
@@ -113,3 +115,7 @@ slogConsoleSetColor(&logger, SLOG_COLOR_DEFAULT);
 > NOTE: Even if you change the color of the console, it won't be visible unless the feature to `LOG2CONSOLE` is enabled and 
 the severity is `SLOG_SEVERITY_CUSTOM`. It is because when logging to console, every severity has a fixed color associated with it, 
 except for `SLOG_SEVERITY_CUSTOM`.
+
+## Additional sample
+
+If you want a sample with context, you can take a look at `slog_test.c` file which is at the root of this project.

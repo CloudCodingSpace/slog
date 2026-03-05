@@ -46,7 +46,7 @@ typedef struct {
 
   void* userState;
   SLCustomOutCallback callback;
-  const SLoggerFeatures features;
+  SLoggerFeatures features;
 } SLogger;
 
 void slogLoggerCreate(SLogger* logger, const char* name, const char* fileName, SLoggerFeatures features);

@@ -39,7 +39,7 @@ void slogLoggerCreate(SLogger* logger, const char* name, const char* fileName, S
   memset(logger, 0, sizeof(SLogger));
   slogLoggerSetName(logger, name);
 
-  memcpy((SLoggerFeatures*)&logger->features, &features, sizeof(SLoggerFeatures));
+  memcpy(&logger->features, &features, sizeof(SLoggerFeatures));
 
   if(logger->fileName)
     slogLoggerSetOutFileName(logger, fileName);
@@ -193,7 +193,6 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
 
   if(logger->features & SLOG_LOGGER_FEATURE_LOG2CUSTOM_OUT && logger->callback) {
     char* msg1;
-    char* msg2;
 
     if(severity == SLOG_SEVERITY_CUSTOM) {
       size_t len = snprintf(NULL, 0, "[%s]: ", logger->name);
@@ -206,14 +205,19 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
       snprintf(msg1, len + 1, "[%s] %s: ", logger->name, severityStrTable[severity]);
     }
 
-    va_list args;
+    va_list args, copy;
     va_start(args, msg);
+    va_start(copy, msg);
+
     size_t len = vsnprintf(NULL, 0, msg, args);
-    msg2 = (char*)calloc(len + 2, sizeof(char));
-    vsnprintf(msg2, len + 1, msg, args);
+    char* msg2 = (char*)calloc(len + 2, sizeof(char));
+
+    vsnprintf(msg2, len + 1, msg, copy);
+    
     msg2[len] = '\n';
     msg2[len+1] = '\0';
 
+    va_end(copy);
     va_end(args);
 
     len = strlen(msg1) + strlen(msg2);
