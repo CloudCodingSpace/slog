@@ -23,12 +23,50 @@ static const char* severityStrTable[SLOG_SEVERITY_COUNT] = {
 
 static uint64_t severityColorTable[SLOG_SEVERITY_COUNT] = {
   0,
-  SLCOLOR_GREEN,
-  SLCOLOR_BLUE,
-  SLCOLOR_YELLOW,
-  SLCOLOR_RED,
-  SLCOLOR_RED
+  SLOG_COLOR_GREEN,
+  SLOG_COLOR_BLUE,
+  SLOG_COLOR_YELLOW,
+  SLOG_COLOR_RED,
+  SLOG_COLOR_RED
 };
+
+void slogLoggerCreate(SLogger* logger, const char* name, const char* fileName, SLoggerFeatures features) {
+  if(!logger) {
+    SLERROR("[SLOG]: The logger can't be NULL!");
+    return;
+  }
+
+  memset(logger, 0, sizeof(SLogger));
+  slogLoggerSetName(logger, name);
+ 
+  logger->features = features;
+
+  if(logger->fileName)
+    slogLoggerSetOutFileName(logger, fileName);
+}
+
+void slogLoggerDestroy(SLogger* logger) {
+  if(!logger) {
+    SLERROR("[SLOG]: The logger can't be NULL!");
+    return;
+  }
+
+  if(logger->name) {
+    free((void*) logger->name);
+    logger->name = NULL;
+  }
+
+  if(logger->fileName) {
+    free((void*) logger->fileName);
+    logger->fileName = NULL;
+  }
+
+  if(logger->file) {
+    fclose(logger->file);
+  }
+
+  memset(logger, 0, sizeof(SLogger));
+}
 
 void slogLoggerSetName(SLogger* logger, const char* name) {
   if(!logger) {
@@ -44,62 +82,83 @@ void slogLoggerSetName(SLogger* logger, const char* name) {
     free((void*) logger->name);
   }
 
-  size_t size = sizeof(char) * strlen(name);
+  size_t size = strlen(name);
 
-  logger->name = (char*) malloc(size + 1);
-  memcpy((void*)logger->name, name, size);
+  logger->name = (char*) malloc(sizeof(char) * (size + 1));
+  memcpy((void*)logger->name, name, size * sizeof(char));
   logger->name[size] = '\0';
 }
 
-void slogLoggerSetColor(SLogger* logger, SLColor color) {
+void slogLoggerSetOutFileName(SLogger* logger, const char* fileName) {
+  if(!logger) {
+    SLERROR("[SLOG]: The logger can't be NULL!");
+    return;
+  }
+  if(!fileName) {
+    SLERROR("[SLOG]: The output file name shouldn't be NULL!");
+    return;
+  }
+
+  if(logger->fileName) {
+    free((void*) logger->fileName);
+  }
+
+  if(logger->file) {
+    fclose(logger->file);
+  }
+
+  size_t size = strlen(fileName);
+
+  logger->fileName = (char*) malloc(sizeof(char) * (size + 1));
+  memcpy((void*)logger->fileName, fileName, size * sizeof(char));
+  logger->fileName[size] = '\0';
+
+  if(logger->features & SLOG_LOGGER_FEATURE_LOG2FILE) {
+    logger->file = fopen(fileName, "w+");
+    if(!logger->file) {
+      SLERROR("[SLOG]: Failed to open the output file! File path :- %s", fileName);
+      logger->file = NULL;
+    }
+  }
+}
+
+void slogConsoleSetColor(SLogger* logger, SLColor color) {
   if(!logger) {
     SLERROR("[SLOG]: The logger can't be NULL!");
     return;
   }
 
   switch(color) {
-    case SLCOLOR_RED:
-      printf("\033[0;%d%dm", (SLCOLOR_RED >> 8) & 0xff, SLCOLOR_RED & 0xff);
+    case SLOG_COLOR_RED:
+      printf("\033[0;%d%dm", (SLOG_COLOR_RED >> 8) & 0xff, SLOG_COLOR_RED & 0xff);
       break;
-    case SLCOLOR_YELLOW:
-      printf("\033[0;%d%dm", (SLCOLOR_YELLOW >> 8) & 0xff, SLCOLOR_YELLOW & 0xff);
+    case SLOG_COLOR_YELLOW:
+      printf("\033[0;%d%dm", (SLOG_COLOR_YELLOW >> 8) & 0xff, SLOG_COLOR_YELLOW & 0xff);
       break;
-    case SLCOLOR_WHITE:
-      printf("\033[0;%d%dm", (SLCOLOR_WHITE >> 8) & 0xff, SLCOLOR_WHITE & 0xff);
+    case SLOG_COLOR_WHITE:
+      printf("\033[0;%d%dm", (SLOG_COLOR_WHITE >> 8) & 0xff, SLOG_COLOR_WHITE & 0xff);
       break;
-    case SLCOLOR_BLACK:
-      printf("\033[0;%d%dm", (SLCOLOR_BLACK >> 8) & 0xff, SLCOLOR_BLACK & 0xff);
+    case SLOG_COLOR_BLACK:
+      printf("\033[0;%d%dm", (SLOG_COLOR_BLACK >> 8) & 0xff, SLOG_COLOR_BLACK & 0xff);
       break;
-    case SLCOLOR_GREEN:
-      printf("\033[0;%d%dm", (SLCOLOR_GREEN >> 8) & 0xff, SLCOLOR_GREEN & 0xff);
+    case SLOG_COLOR_GREEN:
+      printf("\033[0;%d%dm", (SLOG_COLOR_GREEN >> 8) & 0xff, SLOG_COLOR_GREEN & 0xff);
       break;
-    case SLCOLOR_BLUE:
-      printf("\033[0;%d%dm", (SLCOLOR_BLUE >> 8) & 0xff, SLCOLOR_BLUE & 0xff);
+    case SLOG_COLOR_BLUE:
+      printf("\033[0;%d%dm", (SLOG_COLOR_BLUE >> 8) & 0xff, SLOG_COLOR_BLUE & 0xff);
       break;
-    case SLCOLOR_CYAN:
-      printf("\033[0;%d%dm", (SLCOLOR_CYAN >> 8) & 0xff, SLCOLOR_CYAN & 0xff);
+    case SLOG_COLOR_CYAN:
+      printf("\033[0;%d%dm", (SLOG_COLOR_CYAN >> 8) & 0xff, SLOG_COLOR_CYAN & 0xff);
       break;
-    case SLCOLOR_MAGENTA:
-      printf("\033[0;%d%dm", (SLCOLOR_MAGENTA >> 8) & 0xff, SLCOLOR_MAGENTA & 0xff);
+    case SLOG_COLOR_MAGENTA:
+      printf("\033[0;%d%dm", (SLOG_COLOR_MAGENTA >> 8) & 0xff, SLOG_COLOR_MAGENTA & 0xff);
       break;
-    case SLCOLOR_DEFAULT: 
-      printf("\033[0;%dm", SLCOLOR_DEFAULT & 0xff);
+    case SLOG_COLOR_DEFAULT: 
+      printf("\033[0;%dm", SLOG_COLOR_DEFAULT & 0xff);
       break;
-    case SLCOLOR_TOTAL_COUNT: break;
+    case SLOG_COLOR_TOTAL_COUNT: break;
     default:
       SLERROR("[SLOG]: The color provided must be a valid color! The color provided is %d!", color);
-  }
-}
-
-void slogLoggerReset(SLogger* logger) {
-  if(!logger) {
-    SLERROR("[SLOG]: The logger can't be NULL!");
-    return;
-  }
-
-  if(logger->name) {
-    free((void*) logger->name);
-    logger->name = NULL;
   }
 }
 
@@ -113,7 +172,7 @@ void slogSetCustomOutCallback(SLogger* logger, void* userState, SLCustomOutCallb
   logger->callback = callback;
 }
 
-void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg, ...) {
+void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
   if(!logger) {
     SLERROR("[SLOG]: The logger can't be NULL!");
     return;
@@ -132,29 +191,56 @@ void slogLogConsole(SLogger* logger, SLSeverity severity, const char* msg, ...) 
     return;
   }
 
-  if(severity == SLOG_SEVERITY_CUSTOM) {
-    printf("[%s]: ", logger->name);
+  if(logger->features & SLOG_LOGGER_FEATURE_LOG2CUSTOM_OUT) {
+    // TODO:
+  }
   
+  if(logger->features & SLOG_LOGGER_FEATURE_LOG2CONSOLE) {
+    if(severity == SLOG_SEVERITY_CUSTOM) {
+      printf("[%s]: ", logger->name);
+    
+      va_list args;
+      va_start(args, msg);
+      vprintf(msg, args);
+      va_end(args);
+
+      printf("\n");
+    }
+    else {
+      slogConsoleSetColor(logger, severityColorTable[severity]);
+      printf("[%s] %s: ", logger->name, severityStrTable[severity]);
+      
+      va_list args;
+      va_start(args, msg);
+      vprintf(msg, args);
+      va_end(args);
+
+      printf("\n");
+
+      slogConsoleSetColor(logger, SLOG_COLOR_DEFAULT);
+    }
+  }
+  
+  if(logger->features & SLOG_LOGGER_FEATURE_LOG2FILE) {
+    if(logger->file == NULL) {
+      SLERROR("[SLOG]: Can't log to file even though the feature is enabled, because the output file isn't set!");
+      return;
+    }
+
+    if(severity == SLOG_SEVERITY_CUSTOM) {
+      fprintf(logger->file, "[%s]: ", logger->name);
+    }
+    else {
+      fprintf(logger->file, "[%s] %s: ", logger->name, severityStrTable[severity]);
+    }
+
     va_list args;
     va_start(args, msg);
-    vprintf(msg, args);
+    vfprintf(logger->file, msg, args);
     va_end(args);
 
-    printf("\n");
-    return;
+    fprintf(logger->file, "\n");
   }
-
-  slogLoggerSetColor(logger, severityColorTable[severity]);
-  printf("[%s] %s: ", logger->name, severityStrTable[severity]);
-  
-  va_list args;
-  va_start(args, msg);
-  vprintf(msg, args);
-  va_end(args);
-
-  printf("\n");
-
-  slogLoggerSetColor(logger, SLCOLOR_DEFAULT);
 }
 
 #ifdef __cplusplus
