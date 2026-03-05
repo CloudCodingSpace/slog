@@ -37,7 +37,7 @@ typedef enum {
   SLOG_LOGGER_FEATURE_LOG2CUSTOM_OUT = 1 << 2,
 } SLoggerFeatures;
 
-typedef void (*SLCustomOutCallback)(void* userState, uint64_t logLen, uint8_t* log);
+typedef void (*SLCustomOutCallback)(void* userState, uint64_t logLen, const char* log);
 
 typedef struct {
   char* name;
@@ -56,7 +56,7 @@ void slogLoggerSetName(SLogger* logger, const char* name);
 void slogLoggerSetOutFileName(SLogger* logger, const char* fileName);
 void slogConsoleSetColor(SLogger* logger, SLColor color);
 
-void slogSetCustomOutCallback(SLogger* logger, void* userState, SLCustomOutCallback callback);
+void slogLoggerSetCustomOutCallback(SLogger* logger, void* userState, SLCustomOutCallback callback);
 void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...);
 
 #ifdef __cplusplus

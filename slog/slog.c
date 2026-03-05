@@ -162,7 +162,7 @@ void slogConsoleSetColor(SLogger* logger, SLColor color) {
   }
 }
 
-void slogSetCustomOutCallback(SLogger* logger, void* userState, SLCustomOutCallback callback) {
+void slogLoggerSetCustomOutCallback(SLogger* logger, void* userState, SLCustomOutCallback callback) {
   if(!logger) {
     SLERROR("[SLOG]: The logger can't be NULL!");
     return;
@@ -191,14 +191,57 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
     return;
   }
 
-  if(logger->features & SLOG_LOGGER_FEATURE_LOG2CUSTOM_OUT) {
-    // TODO:
+  if(logger->features & SLOG_LOGGER_FEATURE_LOG2CUSTOM_OUT && logger->callback) {
+    char* msg1;
+    char* msg2;
+
+    if(severity == SLOG_SEVERITY_CUSTOM) {
+      size_t len = snprintf(NULL, 0, "[%s]: ", logger->name);
+      msg1 = (char*)calloc(len+1, sizeof(char));
+      snprintf(msg1, len + 1, "[%s]: ", logger->name);
+    }
+    else {
+      size_t len = snprintf(NULL, 0, "[%s] %s: ", logger->name, severityStrTable[severity]);
+      msg1 = (char*)calloc(len+1, sizeof(char));
+      snprintf(msg1, len + 1, "[%s] %s: ", logger->name, severityStrTable[severity]);
+    }
+
+    va_list args;
+    va_start(args, msg);
+    size_t len = vsnprintf(NULL, 0, msg, args);
+    msg2 = (char*)calloc(len + 2, sizeof(char));
+    vsnprintf(msg2, len + 1, msg, args);
+    msg2[len] = '\n';
+    msg2[len+1] = '\0';
+
+    va_end(args);
+
+    len = strlen(msg1) + strlen(msg2);
+    char* msg3 = (char*)calloc(len + 1, sizeof(char));
+
+    int i = 0;
+    for(int j = 0; j < strlen(msg1); j++) {
+      msg3[i] = msg1[j];
+      i++;
+    }
+    for(int j = 0; j < strlen(msg2); j++) {
+      msg3[i] = msg2[j];
+      i++;
+    }
+
+    msg3[len] = '\0';
+
+    free((void*)msg1);
+    free((void*)msg2);
+
+    logger->callback(logger->userState, len+1, msg3);
+    free((void*)msg3);
   }
   
   if(logger->features & SLOG_LOGGER_FEATURE_LOG2CONSOLE) {
     if(severity == SLOG_SEVERITY_CUSTOM) {
       printf("[%s]: ", logger->name);
-    
+      
       va_list args;
       va_start(args, msg);
       vprintf(msg, args);
