@@ -101,15 +101,18 @@ slogLogMsg(&logger, SLOG_SEVERITY_INFO, "hello! my age is %d", 4);
 ## Changing the color of the console
 
 You can change the color of the console by using `slogConsoleSetColor`.
+Also, this function changes the console through which the executable has been launched from.
+>NOTE: This function uses ANSII codes for changing the colors, but if the console doesn't support, 
+ANSII color codes, then it won't do the color change!
 
 Sample :- 
 
 ```c
-slogConsoleSetColor(&logger, SLOG_COLOR_BLUE);
+slogConsoleSetColor(SLOG_COLOR_BLUE);
 
 ... // Custom logs
 
-slogConsoleSetColor(&logger, SLOG_COLOR_DEFAULT);
+slogConsoleSetColor(SLOG_COLOR_DEFAULT);
 ```
 
 > NOTE: Even if you change the color of the console, it won't be visible unless the feature to `LOG2CONSOLE` is enabled and 

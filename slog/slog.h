@@ -49,12 +49,13 @@ typedef struct {
   SLoggerFeatures features;
 } SLogger;
 
+void slogConsoleSetColor(SLColor color);
+
 void slogLoggerCreate(SLogger* logger, const char* name, const char* fileName, SLoggerFeatures features);
 void slogLoggerDestroy(SLogger* logger);
 
 void slogLoggerSetName(SLogger* logger, const char* name);
 void slogLoggerSetOutFileName(SLogger* logger, const char* fileName);
-void slogConsoleSetColor(SLogger* logger, SLColor color);
 
 void slogLoggerSetCustomOutCallback(SLogger* logger, void* userState, SLCustomOutCallback callback);
 void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...);

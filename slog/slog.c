@@ -41,7 +41,7 @@ void slogLoggerCreate(SLogger* logger, const char* name, const char* fileName, S
 
   memcpy(&logger->features, &features, sizeof(SLoggerFeatures));
 
-  if(logger->fileName)
+  if(fileName)
     slogLoggerSetOutFileName(logger, fileName);
 }
 
@@ -113,21 +113,18 @@ void slogLoggerSetOutFileName(SLogger* logger, const char* fileName) {
   memcpy((void*)logger->fileName, fileName, size * sizeof(char));
   logger->fileName[size] = '\0';
 
-  if(logger->features & SLOG_LOGGER_FEATURE_LOG2FILE) {
-    logger->file = fopen(fileName, "w+");
-    if(!logger->file) {
-      SLERROR("[SLOG]: Failed to open the output file! File path :- %s", fileName);
-      logger->file = NULL;
-    }
+  if(!(logger->features & SLOG_LOGGER_FEATURE_LOG2FILE)) {
+    return;
+  }
+  
+  logger->file = fopen(fileName, "w+");
+  if(!logger->file) {
+    SLERROR("[SLOG]: Failed to open the output file! File path :- %s", fileName);
+    logger->file = NULL;
   }
 }
 
-void slogConsoleSetColor(SLogger* logger, SLColor color) {
-  if(!logger) {
-    SLERROR("[SLOG]: The logger can't be NULL!");
-    return;
-  }
-
+void slogConsoleSetColor(SLColor color) {
   switch(color) {
     case SLOG_COLOR_RED:
       printf("\033[0;%d%dm", (SLOG_COLOR_RED >> 8) & 0xff, SLOG_COLOR_RED & 0xff);
@@ -156,7 +153,6 @@ void slogConsoleSetColor(SLogger* logger, SLColor color) {
     case SLOG_COLOR_DEFAULT: 
       printf("\033[0;%dm", SLOG_COLOR_DEFAULT & 0xff);
       break;
-    case SLOG_COLOR_TOTAL_COUNT: break;
     default:
       SLERROR("[SLOG]: The color provided must be a valid color! The color provided is %d!", color);
   }
@@ -254,7 +250,7 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
       printf("\n");
     }
     else {
-      slogConsoleSetColor(logger, severityColorTable[severity]);
+      slogConsoleSetColor(severityColorTable[severity]);
       printf("[%s] %s: ", logger->name, severityStrTable[severity]);
       
       va_list args;
@@ -264,7 +260,7 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
 
       printf("\n");
 
-      slogConsoleSetColor(logger, SLOG_COLOR_DEFAULT);
+      slogConsoleSetColor(SLOG_COLOR_DEFAULT);
     }
   }
   
