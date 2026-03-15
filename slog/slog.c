@@ -191,13 +191,13 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
     char* msg1;
     char* msg2;
     char* msg3;
-    char buff1[32000] = {0};
-    char buff2[32000] = {0};
+    char buff1[16000] = {0};
+    char buff2[16000] = {0};
     char buff3[32000] = {0};
 
     if(severity == SLOG_SEVERITY_CUSTOM) {
       size_t len = snprintf(NULL, 0, "[%s]: ", logger->name);
-      if((len+1) > 32000)
+      if((len+1) > 16000)
         msg1 = (char*)calloc(len+1, sizeof(char));
       else
         msg1 = buff1;
@@ -205,7 +205,7 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
     }
     else {
       size_t len = snprintf(NULL, 0, "[%s] %s: ", logger->name, severityStrTable[severity]);
-      if((len+1) > 32000)
+      if((len+1) > 16000)
         msg1 = (char*)calloc(len+1, sizeof(char));
       else
         msg1 = buff1;
@@ -217,7 +217,7 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
     va_start(copy, msg);
 
     size_t len = vsnprintf(NULL, 0, msg, args);
-    if((len + 2) > 32000)
+    if((len + 2) > 16000)
       msg2 = (char*)calloc(len + 2, sizeof(char));
     else
       msg2 = buff2;
