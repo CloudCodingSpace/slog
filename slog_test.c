@@ -9,7 +9,7 @@ void callback(void* userState, uint64_t logLen, const char* log) {
 int main(int argc, const char** argv) {
   SLogger logger = {0};
 
-  slogLoggerCreate(&logger, "main", NULL, SLOG_LOGGER_FEATURE_LOG2FILE | SLOG_LOGGER_FEATURE_LOG2CONSOLE);
+  slogLoggerCreate(&logger, "main", NULL, SLOG_LOGGER_FEATURE_LOG2CUSTOM_OUT | SLOG_LOGGER_FEATURE_LOG2CONSOLE);
   slogLoggerSetOutFileName(&logger, "main.txt");
   slogLoggerSetCustomOutCallback(&logger, NULL, callback);
 

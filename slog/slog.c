@@ -189,15 +189,26 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
 
   if(logger->features & SLOG_LOGGER_FEATURE_LOG2CUSTOM_OUT && logger->callback) {
     char* msg1;
+    char* msg2;
+    char* msg3;
+    char buff1[32000] = {0};
+    char buff2[32000] = {0};
+    char buff3[32000] = {0};
 
     if(severity == SLOG_SEVERITY_CUSTOM) {
       size_t len = snprintf(NULL, 0, "[%s]: ", logger->name);
-      msg1 = (char*)calloc(len+1, sizeof(char));
+      if((len+1) > 32000)
+        msg1 = (char*)calloc(len+1, sizeof(char));
+      else
+        msg1 = buff1;
       snprintf(msg1, len + 1, "[%s]: ", logger->name);
     }
     else {
       size_t len = snprintf(NULL, 0, "[%s] %s: ", logger->name, severityStrTable[severity]);
-      msg1 = (char*)calloc(len+1, sizeof(char));
+      if((len+1) > 32000)
+        msg1 = (char*)calloc(len+1, sizeof(char));
+      else
+        msg1 = buff1;
       snprintf(msg1, len + 1, "[%s] %s: ", logger->name, severityStrTable[severity]);
     }
 
@@ -206,8 +217,10 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
     va_start(copy, msg);
 
     size_t len = vsnprintf(NULL, 0, msg, args);
-    char* msg2 = (char*)calloc(len + 2, sizeof(char));
-
+    if((len + 2) > 32000)
+      msg2 = (char*)calloc(len + 2, sizeof(char));
+    else
+      msg2 = buff2;
     vsnprintf(msg2, len + 1, msg, copy);
     
     msg2[len] = '\n';
@@ -217,7 +230,10 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
     va_end(args);
 
     len = strlen(msg1) + strlen(msg2);
-    char* msg3 = (char*)calloc(len + 1, sizeof(char));
+    if((len + 1) > 32000)
+      msg3 = (char*)calloc(len + 1, sizeof(char));
+    else
+      msg3 = buff3;
 
     int i = 0;
     for(int j = 0; j < strlen(msg1); j++) {
@@ -231,11 +247,14 @@ void slogLogMsg(SLogger* logger, SLSeverity severity, const char* msg, ...) {
 
     msg3[len] = '\0';
 
-    free((void*)msg1);
-    free((void*)msg2);
+    if(msg1 != buff1)
+      free((void*)msg1);
+    if(msg2 != buff2)
+      free((void*)msg2);
+    if(msg3 != buff3)
+      free((void*)msg3);
 
     logger->callback(logger->userState, len+1, msg3);
-    free((void*)msg3);
   }
   
   if(logger->features & SLOG_LOGGER_FEATURE_LOG2CONSOLE) {
