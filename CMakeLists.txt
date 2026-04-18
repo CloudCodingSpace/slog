@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.30.0)
 project(slog C)
 
 add_library(slog "${CMAKE_CURRENT_SOURCE_DIR}/slog/slog.c")
